@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import pandas as pd
 from transformers import AutoModel, AutoTokenizer
+from huggingface_hub import hf_hub_download
 import io
 import requests
 import json
@@ -13,7 +14,7 @@ import re
 
 # Define the custom class first
 class EmotionClassifierSKLearn:
-    def __init__(self, model_path="bert_model_weights.pth", max_len=128, threshold=0.5):
+    def __init__(self, model_path=None, max_len=128, threshold=0.5):
         self.model_path = model_path
         self.max_len = max_len
         self.threshold = threshold
@@ -64,13 +65,42 @@ class EmotionClassifierSKLearn:
 
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = BERTClass()
-        self.model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
+
+        # Load model from Hugging Face Hub
+        try:
+            st.info("Downloading model from Hugging Face Hub...")
+            model_path = hf_hub_download(
+                repo_id="simonirungu/AfyaMind",
+                filename="bert_model_weights.pth",
+                cache_dir="./model_cache"
+            )
+            self.model.load_state_dict(torch.load(model_path, map_location='cpu'))
+            st.success("Model loaded successfully from Hugging Face!")
+        except Exception as e:
+            st.error(f"Error loading model from Hugging Face: {e}")
+            # Fallback: try local file
+            try:
+                if os.path.exists('bert_model_weights.pth'):
+                    self.model.load_state_dict(torch.load('bert_model_weights.pth', map_location='cpu'))
+                    st.info("Model loaded from local file")
+                else:
+                    st.error("Model file not found locally either")
+                    return
+            except Exception as e2:
+                st.error(f"Error loading local model: {e2}")
+                return
+
         self.model.to(self.device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained('roberta-base')
 
-# Load emotion model
-model = EmotionClassifierSKLearn()
+# Load emotion model with caching
+@st.cache_resource
+def load_emotion_model():
+    return EmotionClassifierSKLearn()
+
+# Initialize model
+model = load_emotion_model()
 
 # DeepSeek API Configuration
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
@@ -104,7 +134,7 @@ def enhance_emotion_detection(text, base_emotions):
 def get_deepseek_response(user_message, detected_emotions):
     """Get mental health response from DeepSeek API"""
 
-    api_key = st.session_state.get('deepseek_api_key', '')
+    api_key = st.session_state.get('sk-59764f2289ea4ba99dbf5abcf7129114', '')
     if not api_key:
         return "Please configure your API key in the sidebar first."
 
@@ -205,11 +235,13 @@ def get_mental_health_response(user_message, detected_emotions, use_api=True):
     # Fallback to rule-based responses
     return get_fallback_response(user_message, detected_emotions)
 
-st.title("AfyaMind - Kenyan Mental Health Assistant")
+st.title("AfyaMind - Kenyan Emotions Classifier and Mental Health Assistant")
 
 # Check if model is loaded
-if model is None:
-    st.error("Warning: Emotion classifier model could not be loaded. Some features may not work properly.")
+if not hasattr(model, 'model') or model.model is None:
+    st.error("Emotion classifier model could not be loaded. Some features may not work properly.")
+else:
+    st.success("Emotion model loaded successfully!")
 
 # Sidebar configuration
 st.sidebar.subheader("API Configuration")
@@ -325,9 +357,9 @@ elif page == "Mental Health Chatbot":
     api_enabled = use_api and api_key and api_key.strip() and api_key != "YOUR_DEEPSEEK_API_KEY_HERE"
 
     if api_enabled:
-        st.success("✅ Using DeepSeek API for personalized responses")
+        st.success("Using DeepSeek API for personalized responses")
     else:
-        st.info("ℹ️ Using built-in responses (configure API for personalized responses)")
+        st.info("Using built-in responses (configure API for personalized responses)")
 
     st.info("About AfyaMind: I'm here to provide supportive mental health conversations using evidence-based strategies.")
 
