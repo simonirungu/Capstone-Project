@@ -23,7 +23,38 @@ The dataset used for the AfyaMind project is publicly available via HuggingFace 
 
 The dataset comprises 58,009 Reddit comments annotated with 27 emotion categories and Neutral, sourced from Reddit. The emotions range from joy, sadness and anger to surprise, fear and love. 
 
-The dataset was stored in CSV format and read into a panda DataFrame for analysis.
+# 3. Data Cleaning 
+
+In this step, basic data cleaning was done to ensure the dataset is consistent and ready for modeling. The process involved:
+
+Checking for and handling null values
+
+Identifying and removing duplicate rows
+
+Standardizing column names for readability.
+
+Cleaning texts by removing punctuation, special characters, numbers and converting all text to lowercase. 
+
+Expanding contractions.
+
+Tokenizing text into words using NTLK. 
+
+Removing stopwords that do not contribute to meaning. 
+
+Lemmatizing words using WorkNet to convert them to their base forms. 
+
+encoding emotion labels into numeric form for model training. 
+
+Handling class imbalance with SMOTE (Synthetic Minority Oversampling Technique) and weighted class adjustments during model training.
+
+
+
+
+
+
+
+
+
 
 
 
