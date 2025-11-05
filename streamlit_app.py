@@ -11,18 +11,18 @@ import requests
 import json
 import os
 import re
+import time
 
-def set_background_image(image_url):
-    """Set background image for the app"""
-    css = f'<style>.stApp {{ background-image: url("{image_url}"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; background-blend-mode: overlay; background-color: rgba(255, 255, 255, 0.9); }} .main .block-container {{ background-color: rgba(255, 255, 255, 0.85); border-radius: 10px; padding: 2rem; margin-top: 1rem; }} .css-1d391kg {{ background-color: rgba(255, 255, 255, 0.95); }}</style>'
+def set_calm_background():
+    """Set calm and serene background for the app"""
+    css = '<style>.stApp { background: linear-gradient(135deg, #E8F5E8 0%, #F0F8FF 50%, #E6F3FF 100%); background-attachment: fixed; } .main .block-container { background-color: rgba(255, 255, 255, 0.92); border-radius: 20px; padding: 2.5rem; margin-top: 1rem; border: 2px solid #2E8B57; box-shadow: 0 8px 25px rgba(0,0,0,0.08); backdrop-filter: blur(10px); } h1, h2, h3, h4, h5, h6 { color: #1a1a1a !important; font-weight: 800 !important; } p, div, span, label { color: #2d2d2d !important; font-weight: 600 !important; } .stTextInput input, .stTextArea textarea { color: #1a1a1a !important; font-weight: 600 !important; background-color: rgba(255, 255, 255, 0.95) !important; border: 2px solid #2E8B57 !important; border-radius: 10px !important; } .stSuccess, .stInfo, .stWarning, .stError { font-weight: 700 !important; color: #1a1a1a !important; } .css-1d391kg { background-color: rgba(255, 255, 255, 0.98) !important; } @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } } @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } } @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }</style>'
     st.markdown(css, unsafe_allow_html=True)
 
-# Set background image
-background_url = "https://img.freepik.com/premium-photo/tree-with-human-brain-as-its-branches-adorned-with-flowers-butterflies-represents-concepts-selfcare-mental-health-positive-thinking-creative-mind-generative-ai_506134-42.jpg"
-set_background_image(background_url)
+# Set calm background
+set_calm_background()
 
-# ===== ENHANCED HEADER WITH BETTER STYLING =====
-header_css = '<style>.afyamind-header { text-align: center; padding: 1rem; background: linear-gradient(135deg, rgba(46, 139, 87, 0.9), rgba(60, 179, 113, 0.8)); border-radius: 15px; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #2E8B57; } .afyamind-title { color: white; font-size: 3.5em !important; font-weight: bold; margin-bottom: 0.2rem !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); } .afyamind-subtitle { color: #F0FFF0; font-size: 1.3em !important; font-weight: 500; margin-top: 0 !important; opacity: 0.95; }</style>'
+# ===== ENHANCED HEADER WITH ANIMATION =====
+header_css = '<style>.afyamind-header { text-align: center; padding: 2rem; background: linear-gradient(135deg, #2E8B57, #32CD32, #228B22); border-radius: 20px; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 3px solid #006400; animation: fadeInUp 1s ease-out; position: relative; overflow: hidden; } .afyamind-header::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: shimmer 3s infinite; } @keyframes shimmer { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } } .afyamind-title { color: #FFFFFF !important; font-size: 4em !important; font-weight: 900 !important; margin-bottom: 0.3rem !important; text-shadow: 4px 4px 8px rgba(0,0,0,0.3); letter-spacing: 2px; position: relative; z-index: 2; } .afyamind-subtitle { color: #F0FFF0 !important; font-size: 1.6em !important; font-weight: 700 !important; margin-top: 0 !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); position: relative; z-index: 2; } .stButton>button { background: linear-gradient(45deg, #2E8B57, #32CD32) !important; color: white !important; font-weight: 700 !important; border: none !important; border-radius: 12px !important; padding: 12px 24px !important; transition: all 0.3s ease !important; animation: pulse 2s infinite; box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3) !important; } .stButton>button:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(46, 139, 87, 0.4) !important; animation: none !important; } .stChatMessage { animation: slideIn 0.5s ease-out !important; } .stSpinner > div { border-color: #2E8B57 transparent transparent transparent !important; }</style>'
 
 st.markdown(header_css, unsafe_allow_html=True)
 st.markdown('<div class="afyamind-header"><h1 class="afyamind-title">🌿 AfyaMind</h1><p class="afyamind-subtitle">Kenyan Emotions Classifier and Mental Health Assistant</p></div>', unsafe_allow_html=True)
@@ -83,26 +83,27 @@ class EmotionClassifierSKLearn:
 
         # Load model from Hugging Face Hub
         try:
-            st.info("Downloading model from Hugging Face Hub...")
-            model_path = hf_hub_download(
-                repo_id="simonirungu/AfyaMind",
-                filename="bert_model_weights.pth",
-                cache_dir="./model_cache"
-            )
-            self.model.load_state_dict(torch.load(model_path, map_location='cpu'))
-            st.success("Model loaded successfully from Hugging Face!")
+            # Add loading animation
+            with st.spinner("🔄 Downloading AI model from Hugging Face... This may take a moment."):
+                model_path = hf_hub_download(
+                    repo_id="simonirungu/AfyaMind",
+                    filename="bert_model_weights.pth",
+                    cache_dir="./model_cache"
+                )
+                self.model.load_state_dict(torch.load(model_path, map_location='cpu'))
+            st.success("✅ Model loaded successfully from Hugging Face!")
         except Exception as e:
-            st.error(f"Error loading model from Hugging Face: {e}")
+            st.error(f"❌ Error loading model from Hugging Face: {e}")
             # Fallback: try local file
             try:
                 if os.path.exists('bert_model_weights.pth'):
                     self.model.load_state_dict(torch.load('bert_model_weights.pth', map_location='cpu'))
-                    st.info("Model loaded from local file")
+                    st.info("ℹ️ Model loaded from local file")
                 else:
-                    st.error("Model file not found locally either")
+                    st.error("❌ Model file not found locally either")
                     return
             except Exception as e2:
-                st.error(f"Error loading local model: {e2}")
+                st.error(f"❌ Error loading local model: {e2}")
                 return
 
         self.model.to(self.device)
@@ -252,16 +253,16 @@ def get_mental_health_response(user_message, detected_emotions, use_api=True):
 
 # Check if model is loaded
 if not hasattr(model, 'model') or model.model is None:
-    st.error("Emotion classifier model could not be loaded. Some features may not work properly.")
+    st.error("❌ Emotion classifier model could not be loaded. Some features may not work properly.")
 else:
-    st.success("Emotion model loaded successfully!")
+    st.success("✅ Emotion model loaded successfully!")
 
 # Sidebar configuration with enhanced styling
 with st.sidebar:
-    sidebar_css = '<style>.sidebar-header { text-align: center; background: linear-gradient(135deg, #2E8B57, #3CB371); padding: 1rem; border-radius: 10px; color: white; margin-bottom: 1rem; }</style>'
+    sidebar_css = '<style>.sidebar-header { text-align: center; background: linear-gradient(135deg, #2E8B57, #32CD32, #228B22); padding: 1.5rem; border-radius: 15px; color: white; margin-bottom: 1.5rem; box-shadow: 0 6px 20px rgba(0,0,0,0.15); border: 2px solid #006400; animation: fadeInUp 1s ease-out; } .stSidebar h3 { color: #1a1a1a !important; font-weight: 800 !important; } .stSidebar label { color: #2d2d2d !important; font-weight: 700 !important; } .stTextInput input, .stTextArea textarea { color: #1a1a1a !important; font-weight: 600 !important; background-color: rgba(255, 255, 255, 0.95) !important; border: 2px solid #2E8B57 !important; border-radius: 8px !important; }</style>'
 
     st.markdown(sidebar_css, unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-header"><h2 style="margin: 0; color: white;">🌿 AfyaMind</h2><p style="margin: 0; font-size: 0.8em; opacity: 0.9;">Mental Wellness</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-header"><h2 style="margin: 0; color: white; font-weight: 800;">🌿 AfyaMind</h2><p style="margin: 0; font-size: 0.9em; opacity: 0.95; font-weight: 600;">Mental Wellness</p></div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -279,35 +280,37 @@ with st.sidebar:
     if api_key_input:
         st.session_state.deepseek_api_key = api_key_input
         if api_key_input.strip() and api_key_input != "YOUR_DEEPSEEK_API_KEY_HERE":
-            st.sidebar.success("API Key configured!")
+            st.sidebar.success("✅ API Key configured!")
         else:
-            st.sidebar.warning("Please enter a valid API key")
+            st.sidebar.warning("⚠️ Please enter a valid API key")
 
     if use_api and (not st.session_state.deepseek_api_key or st.session_state.deepseek_api_key == "YOUR_DEEPSEEK_API_KEY_HERE"):
-        st.sidebar.warning("Enter DeepSeek API key for enhanced responses")
-        st.sidebar.info("Get free API key: https://platform.deepseek.com/")
+        st.sidebar.warning("🔑 Enter DeepSeek API key for enhanced responses")
+        st.sidebar.info("🌐 Get free API key: https://platform.deepseek.com/")
 
     # Navigation
     page = st.sidebar.selectbox("Choose a tool:", 
                                ["Single Text Analysis", "Batch Analysis", "Mental Health Chatbot", "CSV Intervention Generator"])
 
 if page == "Single Text Analysis":
-    st.header("Single Text Emotion Analysis")
+    st.header("📊 Single Text Emotion Analysis")
     text = st.text_input("Enter text to analyze:", placeholder="Type your message here...")
 
-    if st.button("Analyze Emotion"):
+    if st.button("Analyze Emotion 🔍"):
         if text.strip():
-            emotions = get_enhanced_emotions(text)
+            with st.spinner("🔍 Analyzing emotions..."):
+                time.sleep(1)  # Add slight delay for animation
+                emotions = get_enhanced_emotions(text)
             if emotions:
                 emotion_names = [e.replace('_mapped', '').title() for e in emotions]
-                st.success(f"Detected Emotions: {', '.join(emotion_names)}")
+                st.success(f"🎯 Detected Emotions: {', '.join(emotion_names)}")
             else:
-                st.info("No strong emotions detected in the text.")
+                st.info("🤔 No strong emotions detected in the text.")
         else:
-            st.warning("Please enter some text to analyze.")
+            st.warning("⚠️ Please enter some text to analyze.")
 
 elif page == "Batch Analysis":
-    st.header("Batch Text Analysis")
+    st.header("📈 Batch Text Analysis")
 
     st.subheader("Option 1: Enter multiple texts")
     batch_texts = st.text_area("Enter texts (one per line):", height=150)
@@ -315,7 +318,7 @@ elif page == "Batch Analysis":
     st.subheader("Option 2: Upload CSV file")
     uploaded_file = st.file_uploader("Choose a CSV file with a 'text' column", type="csv")
 
-    if st.button("Analyze Batch"):
+    if st.button("Analyze Batch 📊"):
         results = []
 
         # Process text area input
@@ -354,15 +357,15 @@ elif page == "Batch Analysis":
                     # Download button for results
                     csv = results_df.to_csv(index=False)
                     st.download_button(
-                        label="Download Results as CSV",
+                        label="📥 Download Results as CSV",
                         data=csv,
                         file_name="emotion_analysis_results.csv",
                         mime="text/csv"
                     )
                 else:
-                    st.error("CSV file must contain a 'text' column")
+                    st.error("❌ CSV file must contain a 'text' column")
             except Exception as e:
-                st.error(f"Error processing CSV file: {e}")
+                st.error(f"❌ Error processing CSV file: {e}")
 
         # Display text area results
         if results:
@@ -371,18 +374,18 @@ elif page == "Batch Analysis":
                 st.write(result)
 
 elif page == "Mental Health Chatbot":
-    st.header("Mental Health Chatbot")
+    st.header("💬 Mental Health Chatbot")
 
     # Show API status
     api_key = st.session_state.get('deepseek_api_key', '')
     api_enabled = use_api and api_key and api_key.strip() and api_key != "YOUR_DEEPSEEK_API_KEY_HERE"
 
     if api_enabled:
-        st.success("Using DeepSeek API for personalized responses")
+        st.success("✅ Using DeepSeek API for personalized responses")
     else:
-        st.info("Using built-in responses (configure API for personalized responses)")
+        st.info("ℹ️ Using built-in responses (configure API for personalized responses)")
 
-    st.info("About AfyaMind: I'm here to provide supportive mental health conversations using evidence-based strategies.")
+    st.info("ℹ️ About AfyaMind: I'm here to provide supportive mental health conversations using evidence-based strategies.")
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -397,25 +400,26 @@ elif page == "Mental Health Chatbot":
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("Understanding your emotions and preparing response..."):
+            with st.spinner("💭 Understanding your emotions and preparing response..."):
+                time.sleep(1)  # Add slight delay for animation
                 emotions = get_enhanced_emotions(prompt)
                 emotion_names = [e.replace('_mapped', '').title() for e in emotions] if emotions else ["Neutral"]
 
                 response = get_mental_health_response(prompt, emotion_names, use_api)
 
-                st.markdown(f"**Detected emotions:** {', '.join(emotion_names)}")
+                st.markdown(f"**🎭 Detected emotions:** {', '.join(emotion_names)}")
                 st.markdown("---")
                 st.markdown(response)
 
-                full_response = f"**Detected emotions:** {', '.join(emotion_names)}\n\n{response}"
+                full_response = f"**🎭 Detected emotions:** {', '.join(emotion_names)}\n\n{response}"
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    if st.button("Clear Conversation"):
+    if st.button("🗑️ Clear Conversation"):
         st.session_state.messages = []
         st.rerun()
 
 elif page == "CSV Intervention Generator":
-    st.header("CSV Intervention Generator")
+    st.header("📋 CSV Intervention Generator")
 
     st.write("Upload a CSV file with emotional texts to generate personalized mental health interventions.")
 
@@ -427,7 +431,7 @@ elif page == "CSV Intervention Generator":
             if 'text' in df.columns:
                 sample_df = df.head(5)  # Increased limit for better testing
 
-                if st.button("Generate Interventions"):
+                if st.button("Generate Interventions 🚀"):
                     interventions = []
 
                     for idx, row in sample_df.iterrows():
@@ -450,16 +454,16 @@ elif page == "CSV Intervention Generator":
                     # Download results
                     csv = results_df.to_csv(index=False)
                     st.download_button(
-                        label="Download Interventions as CSV",
+                        label="📥 Download Interventions as CSV",
                         data=csv,
                         file_name="mental_health_interventions.csv",
                         mime="text/csv"
                     )
             else:
-                st.error("CSV file must contain a 'text' column")
+                st.error("❌ CSV file must contain a 'text' column")
         except Exception as e:
-            st.error(f"Error processing CSV file: {e}")
+            st.error(f"❌ Error processing CSV file: {e}")
 
 # Disclaimer
 st.markdown("---")
-st.markdown("**Important Disclaimer:** AfyaMind is an AI assistant designed to provide general mental health support and information. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified mental health providers.")
+st.markdown("**⚠️ Important Disclaimer:** AfyaMind is an AI assistant designed to provide general mental health support and information. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified mental health providers.")
