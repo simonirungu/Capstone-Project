@@ -5,6 +5,8 @@ Team: Simon Irungu, John Nyangoya, Eugene Mallah, Sophie Muchiri, Bob-lewis
 
 The AfyaMind project develops an automated emotion detection model to classify text-based data into distinct emotion categories. This system supports mentah health professionals, researchers, and digital wellness organizations by identifying emotional states in written communication. It enables early interventions, empathetic responses, and large-scale emotional trend analysis.
 
+Here is the link to our <a href="https://www.canva.com/design/DAG3t8V_d5M/O0fOdKRHZbzChupC_rGeoA/view?utm_content=DAG3t8V_d5M&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he656109d9f" target="_blank">presentation slides</a>
+
 # Business Understanding
 In the digital era, understanding emotions expressed in text is essential for enhancing user interactions, improving customer support, and analyzing public sentiment. This project details the end-to-end process: from essential text preprocessing and exploratory data analysis (EDA) to the implementation and optimization of a deep learning model. Crucially, the focus here is on multi-label classification, moving beyond binary sentiment to capture the subtle complexity of human communication, where emotions like 'confusion' and 'excitement' can coexist. The resulting system, deployed via a Streamlit application, transforms raw text into actionable emotional profiles, enabling personalized and context-aware responses, as well as application to a mental health chatbot known as `AfyaMind.`
 
