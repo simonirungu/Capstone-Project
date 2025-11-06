@@ -147,7 +147,12 @@ Document Ambiguities: Analyze top co-occuring emotion pairs for UX insights.
 
 # Conclusion
 
-The RoBERTA model forms a stable foundation with real performance (Micro F1: 0.5930). AfyaMind is an intelligent asset for digital mental health, ready for frontline deployment. Recommend approving Phase 1 actions for reliability, cost reduction, and mission fulfillment.
+Model Selection: The RoBERTA deep learning model ultimately achieved the best balance of performance, with a Micro F1 score of 0.579, slightly outperforming the best classical machine learning model, Linear SVC (F1 score of 0.5532).
+
+Overall Performance: The moderate F1 scores across all models highlight the inherent complexity of multi-label emotion classification, which is challenging due to overlapping emotions, varying text complexity, and significant class imbalance in the dataset.
+
+Class Imbalance Handling: Applying class weights resulted in only marginal improvement for the Logistic Regression model and no significant change for Linear SVC, suggesting that the chosen models inherently manage moderate imbalance reasonably well or that more advanced deep learning techniques are required to significantly address the minority classes.
+
 
 
     
